@@ -1,0 +1,43 @@
+﻿@model IEnumerable<Category>
+@{
+    ViewData["Title"] = "Categories";
+    Layout = "_AdminLayout";
+}
+
+<div class="container mt-3">
+    <h2>All Category</h2>
+    <a class="btn btn-success mb-3" asp-action="Create">Create New Category</a>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var category in Model)
+            {
+                <tr>
+                    <td>@category.Id</td>
+                    <td>@category.Name</td>
+                    <td>@category.Description</td>
+                    @* <td>
+
+                        <img src="~/images/Categories/@category.ImagePath" width="100" />
+                        
+                    </td> *@
+                    <td>
+                        <a class="btn btn-primary btn-sm" asp-action="Edit" asp-route-id="@category.Id">Edit</a>
+                        <form asp-action="Delete" asp-route-id="@category.Id" method="post" class="d-inline"
+                              onsubmit="return confirm('Are you sure you want to delete this cinema?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
