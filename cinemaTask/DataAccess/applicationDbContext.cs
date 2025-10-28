@@ -5,6 +5,8 @@ namespace cinemaTask.DataAccess
 {
     public class applicationDbContext : DbContext
     {
+        internal object entities;
+
         public DbSet<Category> Categories { get; set; }
         public DbSet<Cinema> Cinemas { get; set; }
         public DbSet<Actor> Actors { get; set; }

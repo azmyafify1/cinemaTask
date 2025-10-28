@@ -1,4 +1,5 @@
-﻿namespace cinemaTask.Models
+﻿
+namespace cinemaTask.Models
 {
     public class MovieSubimg
     {

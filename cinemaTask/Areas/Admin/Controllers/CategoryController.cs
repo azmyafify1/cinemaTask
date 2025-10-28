@@ -1,31 +1,38 @@
 ﻿using cinemaTask.DataAccess;
 using cinemaTask.Models;
+using cinemaTask.repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace cinemaTask.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class CategoryController : Controller
     {
-        public applicationDbContext _context = new();
-        public IActionResult Index()
+        private Repository<Category> _categoryRepository = new();
+        private Repository<Cinema> _CinemaRepository = new();
+
+
+        // public applicationDbContext _context = new();
+        public async Task<IActionResult> Index( CancellationToken cancellationToken)
         {
-            var categories = _context.Categories.AsNoTracking().AsQueryable();
+            var categories = await _categoryRepository.GetAsync(tracked: false);
 
             return View(categories.AsEnumerable());
         }
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> CreateAsync( Category category , CancellationToken cancellationToken)
         {
-            Category category = new();
-            ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name");
-            ViewBag.Cinemas = new SelectList(_context.Cinemas, "Id", "Name");
+            Category categoryRepository = new();
+            ViewBag.Categories = new SelectList(await _categoryRepository.GetAsync(cancellationToken: cancellationToken), "Id", "Name");
+            ViewBag.Cinemas = new SelectList(await _CinemaRepository.GetAsync(cancellationToken: cancellationToken), "Id", "Name");
             return View(category);
         }
         [HttpPost]
-        public IActionResult Create(Category category ,IFormFile ImagePath)
+        public async Task<IActionResult> Create(Category category ,IFormFile ImagePath, CancellationToken cancellationToken )
         {
             if (ImagePath is not null)
             {
@@ -34,15 +41,15 @@ namespace cinemaTask.Areas.Admin.Controllers
                 using var stream = System.IO.File.Create(path);
                 ImagePath.CopyTo(stream);
                 category.ImagePath = filename;
-                _context.Categories.Add(category);
-                _context.SaveChanges();
+                await _categoryRepository.CreateAsync(category  , cancellationToken );
+                await _categoryRepository.CommitAsync(cancellationToken);
             }
             return RedirectToAction(nameof(Index));
         }
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
         {
-            var category = _context.Categories.Find(id);
+            var category = (await _categoryRepository.GetAsync(e => e.Id == id , cancellationToken : cancellationToken)).FirstOrDefault();
 
             if (category is null)
                 return RedirectToAction( "Home");
@@ -51,22 +58,23 @@ namespace cinemaTask.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Category category)
+        public async Task<IActionResult> Edit(Category category, CancellationToken cancellationToken)
         {
-            _context.Categories.Update(category);
-            _context.SaveChanges();
+             _categoryRepository.Update(category);
+            await _categoryRepository.CommitAsync( cancellationToken);
 
             return RedirectToAction(nameof(Index));
         }
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken )
         {
-            var category = _context.Categories.Find(id);
+            var category =( await _categoryRepository.GetAsync(e => e.Id == id, cancellationToken: cancellationToken)).FirstOrDefault();
+
 
             if (category is null)
                 return RedirectToAction( "Home");
 
-            _context.Categories.Remove(category);
-            _context.SaveChanges();
+           _categoryRepository.Delete(category);
+           await _categoryRepository.CommitAsync(cancellationToken);
 
             return RedirectToAction(nameof(Index));
         }
