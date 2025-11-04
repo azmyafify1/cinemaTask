@@ -14,5 +14,6 @@
         public int CinemaId { get; set; }
         public Cinema? Cinema { get; set; }
         public ICollection<Actormovie>? Actormovies { get; set; }
+        public ICollection<MovieSubimg>? MovieSubimgs { get; set; }
     }
 }

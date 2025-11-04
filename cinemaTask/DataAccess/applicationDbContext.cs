@@ -18,7 +18,7 @@ namespace cinemaTask.DataAccess
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseSqlServer("Data Source=DESKTOP-HSF8481\\SQLEXPRESS;Initial Catalog = Cinema;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");
+            optionsBuilder.UseSqlServer("Data Source=DESKTOP-HSF8481\\SQLEXPRESS;Initial Catalog = Cinema2;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,7 +34,6 @@ namespace cinemaTask.DataAccess
                 .WithMany(a => a.Actormovies)
                 .HasForeignKey(am => am.ActorId);
 
-            // Relationship between Movie and Actormovie
             modelBuilder.Entity<Actormovie>()
                 .HasOne(am => am.Movie)
                 .WithMany(m => m.Actormovies)

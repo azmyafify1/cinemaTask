@@ -13,7 +13,7 @@ namespace cinemaTask.Areas.Admin.Controllers
     [Area("Admin")]
     public class CinemaController : Controller
     {
-        // public applicationDbContext _context = new();
+        //public applicationDbContext _context = new();
         private Repository<Cinema> _cinemaRepository = new();
         public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
